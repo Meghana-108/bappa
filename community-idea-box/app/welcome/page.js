@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
+
 export default function WelcomePage() {
   const router = useRouter()
 
@@ -9,8 +10,23 @@ export default function WelcomePage() {
     router.push('/explore')
   }
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
   return (
     <div className="relative min-h-screen bg-[#F5ECD5] text-[#626F47] overflow-hidden flex items-center justify-center px-6">
+      {/* 🔘 Logout button */}
+      <div className="absolute top-6 right-6 z-20">
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-semibold transition"
+        >
+          Logout
+        </button>
+      </div>
+
       {/* 🔵 Abstract blobs / background shapes */}
       <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-[#F0BB78] rounded-full opacity-30 animate-pulse"></div>
       <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-[#A4B465] rounded-full opacity-30 animate-pulse"></div>

@@ -1,21 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabaseClient'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend
+} from 'recharts'
 
 const COLORS = ['#A4B465', '#F0BB78', '#626F47', '#F5ECD5']
 
 export default function AdminAnalyticsPage() {
   const [ideasByDate, setIdeasByDate] = useState([])
   const [ideasByCategory, setIdeasByCategory] = useState([])
+  const router = useRouter()
 
   useEffect(() => {
     fetchAnalytics()
   }, [])
 
   const fetchAnalytics = async () => {
-    // Get all ideas
     const { data, error } = await supabase.from('ideas').select('*')
 
     if (error) {
@@ -23,7 +27,6 @@ export default function AdminAnalyticsPage() {
       return
     }
 
-    // Group by date
     const dateCountMap = {}
     const categoryCountMap = {}
 
@@ -47,8 +50,23 @@ export default function AdminAnalyticsPage() {
     setIdeasByCategory(formattedCategoryData)
   }
 
+  const handleLogout = async () => {
+    // If using Supabase Auth
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
   return (
-    <main className="min-h-screen bg-[#F5ECD5] text-[#626F47] px-6 py-10">
+    <main className="relative min-h-screen bg-[#F5ECD5] text-[#626F47] px-6 py-10">
+
+      {/* 🔴 Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="absolute top-6 right-6 bg-[#626F47] hover:bg-[#4d5838] text-white font-semibold px-4 py-2 rounded-lg shadow transition"
+      >
+        🚪 Logout
+      </button>
+
       <h1 className="text-4xl font-bold text-center mb-10">📈 Admin Analytics</h1>
 
       {/* Ideas by Date */}

@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabaseClient'
 
 export default function ApprovedIdeasPage() {
   const [ideas, setIdeas] = useState([])
+  const router = useRouter()
 
   useEffect(() => {
     async function fetchApprovedIdeas() {
@@ -24,8 +26,25 @@ export default function ApprovedIdeasPage() {
     fetchApprovedIdeas()
   }, [])
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error('Error logging out:', error)
+    } else {
+      router.push('/')
+    }
+  }
+
   return (
-    <main className="min-h-screen bg-[#F5ECD5] text-[#626F47] px-6 py-10">
+    <main className="min-h-screen bg-[#F5ECD5] text-[#626F47] px-6 py-10 relative">
+      {/* Logout button */}
+      <button
+        onClick={handleLogout}
+        className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+      >
+        Logout
+      </button>
+
       <h1 className="text-4xl font-bold mb-8 text-center">
         ✅ Approved Ideas
       </h1>

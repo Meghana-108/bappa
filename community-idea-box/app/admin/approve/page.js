@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabaseClient'
 import Link from 'next/link'
 
 export default function AdminApprovePage() {
   const [pendingIdeas, setPendingIdeas] = useState([])
   const [approvedIdeas, setApprovedIdeas] = useState([])
+  const router = useRouter()
 
   useEffect(() => {
     fetchIdeas()
@@ -37,20 +39,32 @@ export default function AdminApprovePage() {
     else alert('Update failed: ' + error.message)
   }
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
   return (
-    <main className="min-h-screen bg-[#F5ECD5] text-[#626F47] px-6 py-10">
+    <main className="relative min-h-screen bg-[#F5ECD5] text-[#626F47] px-6 py-10">
+
+      {/* 🔴 Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="absolute top-6 right-6 bg-[#626F47] hover:bg-[#4d5838] text-white font-semibold px-4 py-2 rounded-lg shadow transition"
+      >
+        🚪 Logout
+      </button>
+
       <h1 className="text-4xl font-bold mb-6 text-center">🛠️ Admin Idea Approval Panel</h1>
 
-
-
-<div className="flex justify-end mb-6">
-  <Link
-    href="/admin/approved"
-    className="bg-[#F0BB78] hover:bg-[#A4B465] text-white font-semibold px-4 py-2 rounded"
-  >
-    🔁 View Approved Ideas
-  </Link>
-</div>
+      <div className="flex justify-end mb-6">
+        <Link
+          href="/admin/approved"
+          className="bg-[#F0BB78] hover:bg-[#A4B465] text-white font-semibold px-4 py-2 rounded"
+        >
+          🔁 View Approved Ideas
+        </Link>
+      </div>
 
       {/* Pending Ideas */}
       <section className="mb-12">
@@ -73,8 +87,6 @@ export default function AdminApprovePage() {
           ))}
         </div>
       </section>
-
-     
     </main>
   )
 }
